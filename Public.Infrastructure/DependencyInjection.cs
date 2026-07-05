@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Public.Application.DTO;
 using Public.Application.Interface;
+using Public.Application.Validators;
+using Public.Infrastructure.Common;
 using Public.Infrastructure.Configuration;
 using Public.Infrastructure.Services;
 
@@ -18,12 +22,18 @@ namespace Public.Infrastructure
             services.AddHttpClient<IPortalServices, PortalService>();
             services.AddHttpClient("LifePortal", client =>
             {
-                if (Uri.TryCreate(lifePortalUrl, UriKind.Absolute, out var baseAddress))
-                {
-                    client.BaseAddress = baseAddress;
-                }
-            });
+                var baseUrl = configuration["InternalApis:LifePortal"];
 
+                if (string.IsNullOrWhiteSpace(baseUrl))
+                {
+                    throw new InvalidOperationException(
+                        "InternalApis:LifePortal is not configured."
+                    );
+                }
+
+                client.BaseAddress = new Uri(baseUrl);
+                client.Timeout = TimeSpan.FromSeconds(60);
+            });
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowFrontend", policy =>
@@ -33,6 +43,13 @@ namespace Public.Infrastructure
                           .AllowCredentials());
             });
 
+            services.AddScoped<IPortalServices, PortalService>();
+            services.AddScoped<IValidator<SisosLoginRequest>, SisosLoginRequestValidator>();
+            services.AddScoped<IValidator<SisosCmdRequest>, SisosCmdRequestValidator>();
+            services.AddScoped<IValidator<SisosCustomChainRequest>, SisosCustomChainRequestValidator>();
+
+            services.AddHttpContextAccessor();
+            services.AddScoped<HeaderHelper>();
 
             return services;
         }

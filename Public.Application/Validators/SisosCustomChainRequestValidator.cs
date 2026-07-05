@@ -10,7 +10,10 @@ namespace Public.Application.Validators
         {
             RuleFor(x => x.Chain)
                 .NotEmpty()
-                .WithMessage("Chain is required.");
+                .WithMessage("Chain is required.")
+                .Must(chain => chain.StartsWith("cmd", StringComparison.OrdinalIgnoreCase))
+                .WithMessage("Chain must start with 'cmd'.");
+
 
             RuleFor(x => x.Payload.ValueKind)
                 .NotEqual(JsonValueKind.Undefined)

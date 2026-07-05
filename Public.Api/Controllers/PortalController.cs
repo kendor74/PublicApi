@@ -1,13 +1,13 @@
-﻿using Asp.Versioning;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Public.Api.Base;
 using Public.Application.DTO;
 using Public.Application.Interface;
 
 namespace Public.Api.Controllers
 {
-    [ApiVersion(1.0)]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    //[ApiVersion(1.0)]
+    //[Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/[controller]")]
     public class PortalController : AppControllerBase
     {
         private readonly IPortalServices _portalServices;
@@ -32,6 +32,23 @@ namespace Public.Api.Controllers
             var result = await _portalServices.SisosLoginAsync(request, cancellationToken);
             return CustomResult(result);
         }
+        //[HttpPost("sisos-register")]
+        //public async Task<IActionResult> SisosRegister([FromBody] SisosLoginRequest request, CancellationToken cancellationToken)
+        //{
+        //    var result = await _portalServices.SisosLoginAsync(request, cancellationToken);
+        //    return CustomResult(result);
+        //}
+
+        //[HttpPost("sisos-rest-password")]
+        //public async Task<IActionResult> SisosRestPassword([FromBody] SisosCustomChainRequest request, CancellationToken cancellationToken)
+        //{
+        //    var result = await _portalServices.SisosCustomChainAsync(
+        //        request,
+        //        cancellationToken
+        //    );
+
+        //    return CustomResult(result);
+        //}
 
         [HttpPost("sisos-cmd")]
         public async Task<IActionResult> SisosCmd(
@@ -46,7 +63,7 @@ namespace Public.Api.Controllers
             return CustomResult(result);
         }
         [HttpPost("sisos-custom-chain")]
-    public async Task<IActionResult> SisosCustomChain([FromBody] SisosCustomChainRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> SisosCustomChain([FromBody] SisosCustomChainRequest request, CancellationToken cancellationToken)
         {
             var result = await _portalServices.SisosCustomChainAsync(
                 request,
@@ -55,5 +72,17 @@ namespace Public.Api.Controllers
 
             return CustomResult(result);
         }
+
+        //[HttpPost("sisos-int")]
+        //public async Task<IActionResult> SisosInt([FromBody] SisosCustomChainRequest request, CancellationToken cancellationToken)
+        //{
+        //    var result = await _portalServices.SisosCustomChainAsync(
+        //        request,
+        //        cancellationToken
+        //    );
+
+        //    return CustomResult(result);
+        //}
+        
     }
 }

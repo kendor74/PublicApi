@@ -99,7 +99,7 @@ namespace Public.Infrastructure.Services
                 var client = _httpClientFactory.CreateClient("LifePortal");
 
                 using var response = await client.PostAsJsonAsync(
-                    "PortalApi/Sisos/login",
+                    "api/Sisos/sisos-auth",
                     request,
                     cancellationToken
                 );

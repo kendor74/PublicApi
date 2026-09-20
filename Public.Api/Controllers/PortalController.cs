@@ -6,8 +6,11 @@ using Public.Application.Interface;
 
 namespace Public.Api.Controllers
 {
-    [ApiVersion(1.0)]
-    [Route("api/v{version:apiVersion}/[controller]")]
+
+    [Route("api/[controller]")]
+
+    //[ApiVersion("1.0")]
+    //[Route("api/v{version:apiVersion}/[controller]")]
     public class PortalController : AppControllerBase
     {
         private readonly IPortalServices _portalServices;
@@ -17,7 +20,7 @@ namespace Public.Api.Controllers
             _portalServices = portalServices;
         }
 
-        [HttpGet("get-portal-response")]
+        [HttpGet("portal-health-check")]
         public async Task<IActionResult> GetPortal(CancellationToken cancellationToken)
         {
             var result = await _portalServices.GetPortalResponseAsync(cancellationToken);
@@ -33,22 +36,44 @@ namespace Public.Api.Controllers
             return CustomResult(result);
         }
 
-        [HttpPost("sisos-cmd")]
-        public async Task<IActionResult> SisosCmd(
-            [FromBody] SisosCmdRequest request,
-            CancellationToken cancellationToken)
+        //[HttpPost("sisos-cmd")]
+        //public async Task<IActionResult> SisosCmd(
+        //    [FromBody] SisosCmdRequest request,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var result = await _portalServices.SisosCmdAsync(
+        //        request,
+        //        cancellationToken
+        //    );
+
+        //    return CustomResult(result);
+        //}
+        [HttpPost("sisos-custom-chain")]
+        public async Task<IActionResult> SisosCustomChain([FromBody] SisosCustomChainRequest request, CancellationToken cancellationToken)
         {
-            var result = await _portalServices.SisosCmdAsync(
+            var result = await _portalServices.SisosCustomChainAsync(
                 request,
                 cancellationToken
             );
 
             return CustomResult(result);
         }
-        [HttpPost("sisos-custom-chain")]
-    public async Task<IActionResult> SisosCustomChain([FromBody] SisosCustomChainRequest request, CancellationToken cancellationToken)
+
+        [HttpPost("SMS/otp")]
+        public async Task<IActionResult> SmsSendOTP([FromBody] SmsOTPRequest request, CancellationToken cancellationToken)
         {
-            var result = await _portalServices.SisosCustomChainAsync(
+            var result = await _portalServices.SmsSendOTPAsync(
+                request,
+                cancellationToken
+            );
+
+            return CustomResult(result);
+        }
+
+        [HttpPost("SMS/send-message")]
+        public async Task<IActionResult> SmsSendMessage([FromBody] SmsMessageRequest request, CancellationToken cancellationToken)
+        {
+            var result = await _portalServices.SmsSendMessageAsync(
                 request,
                 cancellationToken
             );

@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
+using System.Net.Http.Headers;
 
 namespace Public.Infrastructure.Common
 {
@@ -13,22 +15,44 @@ namespace Public.Infrastructure.Common
 
         public string? GetBearerToken()
         {
-            var authorizationHeader = _httpContextAccessor
-                .HttpContext?
-                .Request
-                .Headers
-                .Authorization
-                .ToString();
+            var httpContext = _httpContextAccessor.HttpContext;
+
+            if (httpContext is null)
+            {
+                return null;
+            }
+
+            var authorizationHeader = httpContext.Request.Headers[
+                HeaderNames.Authorization
+            ].ToString();
 
             if (string.IsNullOrWhiteSpace(authorizationHeader))
+            {
                 return null;
+            }
 
-            if (!authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            if (!AuthenticationHeaderValue.TryParse(
+                    authorizationHeader,
+                    out var authenticationHeader))
+            {
                 return null;
+            }
 
-            return authorizationHeader["Bearer ".Length..].Trim();
+            if (!string.Equals(
+                    authenticationHeader.Scheme,
+                    "Bearer",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            var token = authenticationHeader.Parameter?.Trim();
+
+            return string.IsNullOrWhiteSpace(token)
+                ? null
+                : token;
         }
-                public string? GetSignature()
+        public string? GetSignature()
         {
             // Use the header name expected by LifePortal.
             // If your actual header is X-Signature, this already supports it.

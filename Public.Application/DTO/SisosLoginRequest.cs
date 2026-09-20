@@ -9,12 +9,10 @@ namespace Public.Application.DTO
     {
         [Required]
         [EmailAddress]
-        [MaxLength(100)]
         public string Email { get; init; } = string.Empty;
 
         [Required]
-        [MinLength(16)]
-        [MaxLength(100)]
+        [MaxLength(16)]
         public string Password { get; init; } = string.Empty;
     }
 }

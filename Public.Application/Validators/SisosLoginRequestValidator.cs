@@ -1,21 +1,30 @@
 using FluentValidation;
 using Public.Application.DTO;
+using System.Text.RegularExpressions;
 
-namespace Public.Application.Validators
+public class SisosLoginRequestValidator
+    : AbstractValidator<SisosLoginRequest>
 {
-    public class SisosLoginRequestValidator : AbstractValidator<SisosLoginRequest>
-    {
-        public SisosLoginRequestValidator()
-        {
-            RuleFor(x => x.Email)
-                .NotEmpty()
-                .WithMessage("Email is required.")
-                .EmailAddress()
-                .WithMessage("Email format is invalid.");
+    private static readonly Regex MicLifeEmailPattern = new(
+        @"^(mic|micuat)\\[a-zA-Z0-9._%+\-]+@(miclife\.com|axxis-systems\.com)$",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant
+    );
 
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage("Password is required.");
-        }
+    public SisosLoginRequestValidator()
+    {
+        RuleFor(x => x.Email)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty()
+            .WithMessage("Email is required.")
+            .Must(email =>
+                !string.IsNullOrWhiteSpace(email) &&
+                MicLifeEmailPattern.IsMatch(email.Trim()))
+            .WithMessage(
+                @"Email must start with mic\ or micuat\ and end with @miclife.com or @axxis-systems.com."
+            );
+
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .WithMessage("Password is required.");
     }
 }

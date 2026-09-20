@@ -6,6 +6,6 @@ namespace Public.Application.DTO
     {
         public string Chain { get; set; } = string.Empty;
 
-        public JsonElement Payload { get; set; }
+        public JsonElement Context { get; set; }
     }
 }

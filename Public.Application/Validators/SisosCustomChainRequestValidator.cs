@@ -12,11 +12,11 @@ namespace Public.Application.Validators
                 .NotEmpty()
                 .WithMessage("Chain is required.");
 
-            RuleFor(x => x.Payload.ValueKind)
+            RuleFor(x => x.Context.ValueKind)
                 .NotEqual(JsonValueKind.Undefined)
-                .WithMessage("Payload is required.")
+                .WithMessage("Context is required.")
                 .NotEqual(JsonValueKind.Null)
-                .WithMessage("Payload cannot be null.");
+                .WithMessage("Context cannot be null.");
         }
     }
 }
